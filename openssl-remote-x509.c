@@ -20,9 +20,7 @@ const unsigned char data_footer[] = {
 #define ADD_DATA(X) { memcpy(data + offset, (X), sizeof((X))); offset += sizeof((X)); }
 int main(void)
 {
-    size_t i, N;
-    size_t offset;
-    size_t totalsize;
+    size_t i, N, offset, totalsize;
     unsigned char* data;
 
     totalsize = 0;
