@@ -3,7 +3,7 @@
 #include <string.h>
 int main(void)
 {
-    unsigned char* buf = NULL, *der = NULL;
+    unsigned char* buf = NULL;
     const unsigned char *p;
     unsigned char data[] = {
           0x30, 0x80, 0x30, 0x00
@@ -21,4 +21,5 @@ int main(void)
     }
 
     free(buf);
+    return 0;
 }
