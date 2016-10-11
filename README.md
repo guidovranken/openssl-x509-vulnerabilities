@@ -2,6 +2,14 @@
 
 These programs will run just fine, unless any of the following events occur.
 
+Comment by OpenSSL:
+
+```
+We've discussed the matter and ddecided that bugs triggered by memory allocation
+failure do not require a CVE and will be just fixed in the relevant branches,
+giving appropriate credit in the commit logs of course.
+```
+
 ## invalid_free_tasn_fre.c
 
 This will invoke ```asn1_item_embed_new```.
@@ -133,3 +141,9 @@ into
 $ ./a.out 
 Segmentation fault
 ```
+
+## Exploitability
+
+The methods proposed above to demonstrate the vulnerability require changing the OpenSSL source code, which is obviously "cheating". However, the safety of the OpenSSL code relies on actions whose success can not be guaranteed (heap allocations and thread locking). If an attacker's control over an application or system is such that they can artificially induce a memory shortage or thread locking failure, perhaps as a local user on a system in an effort to exploit a root process using OpenSSL, or through a remotely triggerable memory accumulation (CVE-2016-6304?), then an attack might be viable.
+
+I welcome comments on this in the Hacker News thread I will be creating (URL will be inserted here later).
