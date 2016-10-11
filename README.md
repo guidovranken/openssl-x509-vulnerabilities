@@ -1,6 +1,8 @@
 # openssl-x509-vulnerabilities
 
-These programs will run just fine, unless any of the following events occur.
+These programs will run just fine, unless memory allocation or thread locking fails at certain places in the code.
+
+Tested on OpenSSL 1.1.0b on 64 bit Linux.
 
 Comment by OpenSSL:
 
