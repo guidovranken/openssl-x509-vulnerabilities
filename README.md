@@ -148,4 +148,4 @@ Segmentation fault
 
 The methods proposed above to demonstrate the vulnerability require changing the OpenSSL source code, which is obviously "cheating". However, the safety of the OpenSSL code relies on actions whose success can not be guaranteed (heap allocations and thread locking). If an attacker's control over an application or system is such that they can artificially induce a memory shortage or thread locking failure, perhaps as a local user on a system in an effort to exploit a root process using OpenSSL, or through a remotely triggerable memory accumulation (CVE-2016-6304?), then an attack might be viable.
 
-I welcome comments on this in the Hacker News thread I will be creating (URL will be inserted here later).
+I welcome comments on this in the Reddit thread: https://www.reddit.com/r/netsec/comments/56z115/new_openssl_doublefree_and_invalid_free/
