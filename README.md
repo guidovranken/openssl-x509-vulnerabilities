@@ -66,3 +66,70 @@ $ ./a.out
 *** Error in `./a.out': free(): invalid pointer: 0x00000000013d50c8 ***
 Aborted
 ```
+
+## aa
+
+This will invoke ```x509_name_ex_d2i```.
+
+(Copied from OpenSSL 1.1.0b sources)
+
+```c
+static int x509_name_ex_d2i(ASN1_VALUE **val,
+                            const unsigned char **in, long len,
+                            const ASN1_ITEM *it, int tag, int aclass,
+                            char opt, ASN1_TLC *ctx)
+{
+    ...
+    ...
+
+    /* Convert internal representation to X509_NAME structure */
+    for (i = 0; i < sk_STACK_OF_X509_NAME_ENTRY_num(intname.s); i++) {
+        entries = sk_STACK_OF_X509_NAME_ENTRY_value(intname.s, i);
+        for (j = 0; j < sk_X509_NAME_ENTRY_num(entries); j++) {
+            entry = sk_X509_NAME_ENTRY_value(entries, j);
+            entry->set = i;
+            if (!sk_X509_NAME_ENTRY_push(nm.x->entries, entry)) {
+                /*
+                 * Free all in entries if sk_X509_NAME_ENTRY_push return failure.
+                 * X509_NAME_ENTRY_free will check the null entry.
+                 */
+                sk_X509_NAME_ENTRY_pop_free(entries, X509_NAME_ENTRY_free);
+                goto err;
+            }
+            /*
+             * If sk_X509_NAME_ENTRY_push return success, clean the entries[j].
+             * It's necessary when 'goto err;' happens.
+             */
+            sk_X509_NAME_ENTRY_set(entries, j, NULL);
+        }
+        sk_X509_NAME_ENTRY_free(entries);
+        sk_STACK_OF_X509_NAME_ENTRY_set(intname.s, i, NULL);
+    }
+    ...
+    ...
+ err:
+    X509_NAME_free(nm.x);
+    sk_STACK_OF_X509_NAME_ENTRY_pop_free(intname.s, sk_X509_NAME_ENTRY_free);
+    ASN1err(ASN1_F_X509_NAME_EX_D2I, ERR_R_NESTED_ASN1_ERROR);
+    return 0;
+}
+```
+
+If ```sk_X509_NAME_ENTRY_push``` fails due to a failure to reallocate memory, a double-free will occur; the first free occurs in ```sk_X509_NAME_ENTRY_pop_free``` and the second in ```sk_STACK_OF_X509_NAME_ENTRY_pop_free```.
+
+For an easy demonstration of the vulnerability you may do the following in order to emulate failure. Change
+
+```c
+            if (!sk_X509_NAME_ENTRY_push(nm.x->entries, entry)) {
+```
+
+into
+
+```c
+            if ( 1 ) {
+```
+
+```sh
+$ ./a.out 
+Segmentation fault
+```
