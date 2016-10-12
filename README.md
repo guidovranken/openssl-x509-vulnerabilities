@@ -1,5 +1,7 @@
 # openssl-x509-vulnerabilities
 
+**UPDATE** Here is a fix for the double-free in ```x509_name_ex_d2i```: https://github.com/openssl/openssl/commit/6dcba070a94b1ead92f3e327cf207a0b7db6596f
+
 These programs will run just fine, unless memory allocation or thread locking fails at certain places in the code.
 
 Tested on OpenSSL 1.1.0b on 64 bit Linux.
